@@ -317,6 +317,8 @@ Set-Acl -Path $memeClubPath -AclObject $aclObject
 # Task#3
 net accounts /maxpwage:210
 net accounts /minpwlen:10
+net accounts /lockoutduration:30
+net accounts /lockoutthreshold:6
 # Set-ADDefaultDomainPasswordPolicy -ComplexityEnabled $True
 
 # Task#4

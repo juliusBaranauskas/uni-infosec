@@ -77,8 +77,10 @@ chown Fin1:administration /bendrove/administracija/fin1
 # setfacl -m group:director:rwx,group:sysadmin:rwx,default:group:sysadmin:rwx,default:group:director:rwx /bendrove/administracija/fin1
 # chmod +t /bendrove/administracija/fin1
 
-# mkdir -p /bendrove/administracija/fin2
-# setfacl 
+mkdir -p /bendrove/administracija/fin2
+setfacl -m u::rwx,default:user::rwx /bendrove/administracija/fin2
+chown Fin2:administration /bendrove/administracija/fin2
+
 
 
 # Vadybininku kampelis
@@ -90,9 +92,9 @@ mkdir -p /bendrove/vadovai/man1
 setfacl -m u::rwx,default:user::rwx /bendrove/vadovai/man1
 chown Man1:manager /bendrove/vadovai/man1
 
-
-# mkdir -p bendrove/vadovai/man2
-# setfacl 
+mkdir -p /bendrove/vadovai/man2
+setfacl -m u::rwx,default:user::rwx /bendrove/vadovai/man2
+chown Man2:manager /bendrove/vadovai/man2
 
 
 # visi daro ka nori
