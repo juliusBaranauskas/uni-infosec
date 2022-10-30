@@ -331,7 +331,7 @@ net accounts /lockoutthreshold:6
 # Task#4
 Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Force -Type "DWord" -Name "NoDispCPL" -Value 1
 
-Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Force -Type "DWord" -Name "NoChangingWallpaper" -Value 1
+Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\ActiveDesktop" -Force -Type "DWord" -Name "NoChangingWallPaper" -Value 1
 
 New-Item -Path "HKLM:\Software\Policies\Microsoft\Windows" -Name "RemovableStorageDevices" -Force
 Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\RemovableStorageDevices" -Force -Type "DWord" -Name "Deny_All" -Value 1
