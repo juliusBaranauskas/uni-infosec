@@ -333,6 +333,7 @@ Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies
 
 Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Force -Type "DWord" -Name "NoChangingWallpaper" -Value 1
 
+New-Item -Path "HKLM:\Software\Policies\Microsoft\Windows" -Name "RemovableStorageDevices" -Force
 Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\RemovableStorageDevices" -Force -Type "DWord" -Name "Deny_All" -Value 1
 
 Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Force -Type "DWord" -Name "HidePowerOptions" -Value 1
@@ -341,7 +342,7 @@ Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies
 
 auditpol /set /category:"Logon/Logoff" /success:enable /failure:enable
 auditpol /set /subcategory:"Security state change" /success:enable /failure:enable
-auditpol /set /subcategory:"Audit policy change" /sucess:enable /failure:enable
+auditpol /set /subcategory:"Audit policy change" /success:enable /failure:enable
 
 
 # create dir_to_chown as user x by running another powershell with `RunAs user`

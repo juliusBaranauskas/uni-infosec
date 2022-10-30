@@ -28,7 +28,6 @@ groupadd sysadmin
 groupadd director
 groupadd administration
 groupadd manager        
-groupadd peasant
 groupadd employee
 
 # Create users and remove passwords for them
@@ -50,7 +49,7 @@ passwd -d Man1
 useradd -d /bendrove/vadovai/man1 -g manager -G employee Man2
 passwd -d Man2
 
-useradd -d /bendrove -g peasant -G employee Supreme
+useradd -d /bendrove -g employee Supreme
 passwd -d Supreme
 
 # Kuriam direktorijas
