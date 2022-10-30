@@ -1,24 +1,12 @@
 using namespace System.Security.AccessControl;
 
+$sysAdminGroup = "sysadmin"
+$bossGroup = "director"
+$administrationGroup = "administration"
+$managerGroup = "manager"
+$employeeGroup = "employee"
 
-# cleanup
-Remove-LocalUser -Name SystemAdmin
-Remove-LocalUser -Name BossPerson
-Remove-LocalUser -Name Fin1
-Remove-LocalUser -Name Fin2
-Remove-LocalUser -Name Man1
-Remove-LocalUser -Name Man2
-Remove-LocalUser -Name Supreme
-
-
-Remove-LocalGroup -Name "sysadmin"
-Remove-LocalGroup -Name "boss"
-Remove-LocalGroup -Name "administration"
-Remove-LocalGroup -Name "manager"
-Remove-LocalGroup -Name "employee"
-
-Remove-Item -Recurse -Path "C:\bendrove"
-
+#region helper Methods
 function defaultACL {
     param([string]$path)
     $resAcl = Get-Acl -Path $path
@@ -93,20 +81,39 @@ function clearInheritance {
     $currACL.SetAccessRuleProtection($true, $false)
     Set-Acl -Path $path -AclObject $currACL
 }
+#endregion
 
-New-LocalGroup -Name "sysadmin"
-New-LocalGroup -Name "boss"
-New-LocalGroup -Name "administration"
-New-LocalGroup -Name "manager"
-New-LocalGroup -Name "employee"
+#region cleanup
+Remove-LocalUser -Name SystemAdmin
+Remove-LocalUser -Name BossPerson
+Remove-LocalUser -Name Fin1
+Remove-LocalUser -Name Fin2
+Remove-LocalUser -Name Man1
+Remove-LocalUser -Name Man2
+Remove-LocalUser -Name Supreme
 
-addUser -username "SystemAdmin" -groups "employee", "sysadmin", "Administrators"
-addUser -username "BossPerson" -groups "employee", "boss"
-addUser -username "Fin1" -groups "employee", "administration"
-addUser -username "Fin2" -groups "employee", "administration"
-addUser -username "Man1" -groups "employee", "manager"
-addUser -username "Man2" -groups "employee", "manager"
-addUser -username "Supreme" -groups "employee"
+Remove-LocalGroup -Name $sysAdminGroup
+Remove-LocalGroup -Name $bossGroup
+Remove-LocalGroup -Name $administrationGroup
+Remove-LocalGroup -Name $managerGroup
+Remove-LocalGroup -Name $employeeGroup
+
+Remove-Item -Recurse -Path "C:\bendrove"
+#endregion
+
+New-LocalGroup -Name $sysAdminGroup
+New-LocalGroup -Name $bossGroup
+New-LocalGroup -Name $administrationGroup
+New-LocalGroup -Name $managerGroup
+New-LocalGroup -Name $employeeGroup
+
+addUser -username "SystemAdmin" -groups $employeeGroup, $sysAdminGroup, "Administrators"
+addUser -username "BossPerson" -groups $employeeGroup, $bossGroup
+addUser -username "Fin1" -groups $employeeGroup, $administrationGroup
+addUser -username "Fin2" -groups $employeeGroup, $administrationGroup
+addUser -username "Man1" -groups $employeeGroup, $managerGroup
+addUser -username "Man2" -groups $employeeGroup, $managerGroup
+addUser -username "Supreme" -groups $employeeGroup
 
 
 #region bendrove
@@ -118,9 +125,9 @@ clearInheritance -path $bendrovePath
 
 $aclObject = defaultACL -Path $bendrovePath
 
-$sysadminEntry = fullControlACL -user "sysadmin"
-$bossEntry = fullControlACL -user "boss"
-$employeeEntry = rxACL -user "employee"
+$sysadminEntry = fullControlACL -user $sysAdminGroup
+$bossEntry = fullControlACL -user $bossGroup
+$employeeEntry = rxACL -user $employeeGroup
 
 $aclObject.AddAccessRule($sysadminEntry)
 $aclObject.AddAccessRule($bossEntry)
@@ -138,8 +145,8 @@ clearInheritance -path $bossPath
 
 $aclObject = defaultACL -Path $bossPath
 
-$sysadminEntry = fullControlACL -user "sysadmin"
-$bossEntry = fullControlACL -user "boss"
+$sysadminEntry = fullControlACL -user $sysAdminGroup
+$bossEntry = fullControlACL -user $bossGroup
 $administrationMemberEntry = rwxACL -user "Fin1"
 
 $aclObject.AddAccessRule($sysadminEntry)
@@ -158,9 +165,9 @@ clearInheritance -path $administrationPath
 
 $aclObject = defaultACL -Path $administrationPath
 
-$sysadminEntry = fullControlACL -user "sysadmin"
-$bossEntry = fullControlACL -user "boss"
-$administrationEntry = rxACL -user "administration"
+$sysadminEntry = fullControlACL -user $sysAdminGroup
+$bossEntry = fullControlACL -user $bossGroup
+$administrationEntry = rxACL -user $administrationGroup
 
 $aclObject.AddAccessRule($sysadminEntry)
 $aclObject.AddAccessRule($bossEntry)
@@ -178,8 +185,8 @@ New-Item -Path $admin1Path -ItemType "Directory"
 
 $aclObject = defaultACL -Path $admin1Path
 
-$sysadminEntry = fullControlACL -user "sysadmin"
-$bossEntry = fullControlACL -user "boss"
+$sysadminEntry = fullControlACL -user $sysAdminGroup
+$bossEntry = fullControlACL -user $bossGroup
 $admin1Entry = rwxACL -user "Fin1"
 
 # $aclObject.AddAccessRule($sysadminEntry)
@@ -198,8 +205,8 @@ New-Item -Path $admin2Path -ItemType "Directory"
 
 $aclObject = defaultACL -Path $admin2Path
 
-$sysadminEntry = fullControlACL -user "sysadmin"
-$bossEntry = fullControlACL -user "boss"
+$sysadminEntry = fullControlACL -user $sysAdminGroup
+$bossEntry = fullControlACL -user $bossGroup
 $admin2Entry = rwxACL -user "Fin2"
 
 # $aclObject.AddAccessRule($sysadminEntry)
@@ -218,9 +225,9 @@ clearInheritance -path $managerPath
 
 $aclObject = defaultACL -Path $managerPath
 
-$sysadminEntry = fullControlACL -user "sysadmin"
-$bossEntry = fullControlACL -user "boss"
-$managerEntry = rxACL -user "manager"
+$sysadminEntry = fullControlACL -user $sysAdminGroup
+$bossEntry = fullControlACL -user $bossGroup
+$managerEntry = rxACL -user $managerGroup
 
 $aclObject.AddAccessRule($sysadminEntry)
 $aclObject.AddAccessRule($bossEntry)
@@ -238,8 +245,8 @@ New-Item -Path $manager1Path -ItemType "Directory"
 
 $aclObject = defaultACL -Path $manager1Path
 
-$sysadminEntry = fullControlACL -user "sysadmin"
-$bossEntry = fullControlACL -user "boss"
+$sysadminEntry = fullControlACL -user $sysAdminGroup
+$bossEntry = fullControlACL -user $bossGroup
 $manager1Entry = rwxACL -user "Man1"
 
 
@@ -260,8 +267,8 @@ New-Item -Path $manager2Path -ItemType "Directory"
 
 $aclObject = defaultACL -Path $manager2Path
 
-$sysadminEntry = fullControlACL -user "sysadmin"
-$bossEntry = fullControlACL -user "boss"
+$sysadminEntry = fullControlACL -user $sysAdminGroup
+$bossEntry = fullControlACL -user $bossGroup
 $manager2Entry = rwxACL -user "Man2"
 
 
@@ -280,9 +287,9 @@ New-Item -Path $chaosasPath -ItemType "Directory"
 # Clear inheritance
 # clearInheritance -path $chaosasPath
 
-# $sysadminEntry = fullControlACL -user "sysadmin"
-# $bossEntry = fullControlACL -user "boss"
-$employeeEntry = fullControlACL -user "employee"
+# $sysadminEntry = fullControlACL -user $sysAdminGroup
+# $bossEntry = fullControlACL -user $bossGroup
+$employeeEntry = fullControlACL -user $employeeGroup
 
 # $aclObject.AddAccessRule($sysadminEntry)
 # $aclObject.AddAccessRule($bossEntry)
@@ -301,8 +308,8 @@ clearInheritance -path $memeClubPath
 
 $aclObject = defaultACL -Path $memeClubPath
 
-$sysadminEntry = fullControlACL -user "sysadmin"
-$bossEntry = fullControlACL -user "boss"
+$sysadminEntry = fullControlACL -user $sysAdminGroup
+$bossEntry = fullControlACL -user $bossGroup
 $manager2Entry = rwxACL -user "Man2"
 $fin1Entry = rwxACL -user "Fin1"
 
