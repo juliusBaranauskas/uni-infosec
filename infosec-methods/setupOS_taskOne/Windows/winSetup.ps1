@@ -380,7 +380,7 @@ auditpol /set /category:"Privilege Use" /success:enable /failure:enable
 # Task#7
 #region accounting
 $accountingPath = $administrationPath + "\accounting"
-New-Item -Path "" -ItemType "Directory"
+New-Item -Path $accountingPath -ItemType "Directory"
 
 $aclObject = defaultACL -Path $accountingPath
 
