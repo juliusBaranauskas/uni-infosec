@@ -5,6 +5,7 @@ $bossGroup = "director"
 $administrationGroup = "administration"
 $managerGroup = "manager"
 $employeeGroup = "employee"
+$accountingGroup = "accounting"
 
 #region helper Methods
 function defaultACL {
@@ -76,6 +77,18 @@ function rwxACL {
     return $rule
 }
 
+function noneACL {
+    param([string]$user)
+    
+    $rule = New-Object FileSystemAccessRule(
+            $user,
+            0,
+            ([InheritanceFlags]::ContainerInherit + [InheritanceFlags]::ObjectInherit),
+            [PropagationFlags]::None,
+            [AccessControlType]::Allow)
+    return $rule
+}
+
 function clearInheritance {
     param([string]$path)
     
@@ -93,12 +106,14 @@ Remove-LocalUser -Name Fin2
 Remove-LocalUser -Name Man1
 Remove-LocalUser -Name Man2
 Remove-LocalUser -Name Supreme
+Remove-LocalUser -Name AccounterNo1
 
 Remove-LocalGroup -Name $sysAdminGroup
 Remove-LocalGroup -Name $bossGroup
 Remove-LocalGroup -Name $administrationGroup
 Remove-LocalGroup -Name $managerGroup
 Remove-LocalGroup -Name $employeeGroup
+Remove-LocalGroup -Name $accountingGroup
 
 Remove-Item -Recurse -Path "C:\bendrove"
 #endregion
@@ -108,6 +123,8 @@ New-LocalGroup -Name $bossGroup
 New-LocalGroup -Name $administrationGroup
 New-LocalGroup -Name $managerGroup
 New-LocalGroup -Name $employeeGroup
+New-LocalGroup -Name $accountingGroup
+
 
 addUser -username "SystemAdmin" -groups $employeeGroup, $sysAdminGroup, "Administrators"
 addUser -username "BossPerson" -groups $employeeGroup, $bossGroup
@@ -117,6 +134,7 @@ addUser -username "Man1" -groups $employeeGroup, $managerGroup
 addUser -username "Man2" -groups $employeeGroup, $managerGroup
 addUser -username "Supreme" -groups $employeeGroup
 
+addUser -username "AccounterNo1" -groups $employeeGroup, $accountingGroup
 
 #region bendrove
 $bendrovePath = "C:\bendrove"
@@ -170,10 +188,12 @@ $aclObject = defaultACL -Path $administrationPath
 $sysadminEntry = fullControlACL -user $sysAdminGroup
 $bossEntry = fullControlACL -user $bossGroup
 $administrationEntry = rxACL -user $administrationGroup
+$accountingEntry = rxACL -user $accountingGroup
 
 $aclObject.AddAccessRule($sysadminEntry)
 $aclObject.AddAccessRule($bossEntry)
 $aclObject.AddAccessRule($administrationEntry)
+$aclObject.AddAccessRule($accountingEntry)
 Set-Acl -Path $administrationPath -AclObject $aclObject
 #endregion
 
@@ -182,18 +202,13 @@ Set-Acl -Path $administrationPath -AclObject $aclObject
 $admin1Path = "C:\bendrove\administracija\fin1"
 New-Item -Path $admin1Path -ItemType "Directory"
 
-# Clear inheritance
-# clearInheritance -path $admin1Path
-
 $aclObject = defaultACL -Path $admin1Path
 
-$sysadminEntry = fullControlACL -user $sysAdminGroup
-$bossEntry = fullControlACL -user $bossGroup
+$accountingEntry = noneACL -user $accountingGroup
 $admin1Entry = rwxACL -user "Fin1"
 
-# $aclObject.AddAccessRule($sysadminEntry)
-# $aclObject.AddAccessRule($bossEntry)
 $aclObject.AddAccessRule($admin1Entry)
+$aclObject.AddAccessRule($accountingEntry)
 Set-Acl -Path $admin1Path -AclObject $aclObject
 #endregion
 
@@ -202,18 +217,13 @@ Set-Acl -Path $admin1Path -AclObject $aclObject
 $admin2Path = "C:\bendrove\administracija\fin2"
 New-Item -Path $admin2Path -ItemType "Directory"
 
-# Clear inheritance
-# clearInheritance -path $admin2Path
-
 $aclObject = defaultACL -Path $admin2Path
 
-$sysadminEntry = fullControlACL -user $sysAdminGroup
-$bossEntry = fullControlACL -user $bossGroup
+$accountingEntry = noneACL -user $accountingGroup
 $admin2Entry = rwxACL -user "Fin2"
 
-# $aclObject.AddAccessRule($sysadminEntry)
-# $aclObject.AddAccessRule($bossEntry)
 $aclObject.AddAccessRule($admin2Entry)
+$aclObject.AddAccessRule($accountingEntry)
 Set-Acl -Path $admin2Path -AclObject $aclObject
 #endregion
 
@@ -348,7 +358,6 @@ auditpol /set /subcategory:"Security state change" /success:enable /failure:enab
 auditpol /set /subcategory:"Audit policy change" /success:enable /failure:enable
 
 # Task#6
-# create dir_to_chown as user x by running another powershell with `RunAs user`
 # ps1 file that takes as a param path to create a file and runs in another users name
 $username = 'Fin1'
 $password = $username + "SecUre123;Pass"
@@ -360,10 +369,26 @@ $testFilename="testChown.test"
 $currentPath=(Get-Location).Path.ToString()
 $createFileScriptPath = $currentPath + "\createFile.ps1"
 $args= $createFileScriptPath + " " + $chaosasPath + " " + $testFilename
-Start-Process powershell.exe -Credential $credential -ArgumentList ("-file $args")
+Start-Process powershell.exe -Credential $credential -ArgumentList ("-file $args") -Wait
 
-$testFilePath = $chaosasPath + $testFilename
+$testFilePath = $chaosasPath + "\" + $testFilename
 takeown /f $testFilePath
 
 # Task#8
 auditpol /set /category:"Privilege Use" /success:enable /failure:enable
+
+# Task#7
+#region accounting
+$accountingPath = $administrationPath + "\accounting"
+New-Item -Path "" -ItemType "Directory"
+
+$aclObject = defaultACL -Path $accountingPath
+
+$managerEntry = rwxACL -user $managerGroup
+$accountingEntry = rxACL -user $accountingGroup
+
+$aclObject.AddAccessRule($accountingEntry)
+Set-Acl -Path $accountingPath -AclObject $aclObject
+#endregion
+
+
