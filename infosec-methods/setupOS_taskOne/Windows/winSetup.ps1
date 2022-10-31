@@ -34,7 +34,7 @@ function addUser {
     foreach($group in $groups) 
     {
         $group = Get-LocalGroup -Name $group
-        Add-LocalGroupMember -Group $group -Member $user | Out-Null
+        Add-LocalGroupMember -Group $group -Member $user -NoPassword | Out-Null
     }
 }
 
@@ -360,7 +360,8 @@ $createFileScriptPath = $currentPath + "\createFile.ps1"
 $args= $createFileScriptPath + " " + $chaosasPath + " " + $testFilename
 Start-Process powershell.exe -Credential $credential -ArgumentList ("-file $args")
 
-takeown /f $chaosasPath + $testFilename
+$testFilePath = $chaosasPath + $testFilename
+takeown /f $testFilePath
 
 # Task#8
 auditpol /set /category:"Privilege Use" /success:enable /failure:enable
