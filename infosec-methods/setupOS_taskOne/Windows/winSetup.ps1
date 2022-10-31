@@ -28,7 +28,7 @@ function addUser {
         [string[]]$groups
     )
 
-    $Password = $username -AsSecureString
+    $Password = ConvertTo-SecureString $username -AsPlainText -Force
     $user = New-LocalUser -Name $username -Password $Password
     Add-LocalGroupMember -Group $(Get-LocalGroup -Name "Users") -Member $user | Out-Null 
 
