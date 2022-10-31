@@ -28,7 +28,8 @@ function addUser {
         [string[]]$groups
     )
 
-    $Password = ConvertTo-SecureString $username -AsPlainText -Force
+    $psw = $username + "SecUre123;Pass"
+    $Password = ConvertTo-SecureString $psw -AsPlainText -Force
     $user = New-LocalUser -Name $username -Password $Password
     Add-LocalGroupMember -Group $(Get-LocalGroup -Name "Users") -Member $user | Out-Null 
 
@@ -350,7 +351,7 @@ auditpol /set /subcategory:"Audit policy change" /success:enable /failure:enable
 # create dir_to_chown as user x by running another powershell with `RunAs user`
 # ps1 file that takes as a param path to create a file and runs in another users name
 $username = 'Fin1'
-$password = $username
+$password = $username + "SecUre123;Pass"
 
 $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential $username, $securePassword
