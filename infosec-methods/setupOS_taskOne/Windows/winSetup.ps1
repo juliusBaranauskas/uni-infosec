@@ -323,6 +323,7 @@ Set-Acl -Path $memeClubPath -AclObject $aclObject
 
 # Task#3
 net accounts /maxpwage:210
+net accounts /minpwage:20
 net accounts /minpwlen:10
 net accounts /lockoutduration:30
 net accounts /lockoutthreshold:6
@@ -339,12 +340,27 @@ Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\RemovableStora
 Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Force -Type "DWord" -Name "HidePowerOptions" -Value 1
 # try to forbid executing shutdown.exe
 
-
+# Task#5
 auditpol /set /category:"Logon/Logoff" /success:enable /failure:enable
 auditpol /set /subcategory:"Security state change" /success:enable /failure:enable
 auditpol /set /subcategory:"Audit policy change" /success:enable /failure:enable
 
-
+# Task#6
 # create dir_to_chown as user x by running another powershell with `RunAs user`
-takeown /f C:\dir_to_chown
+# ps1 file that takes as a param path to create a file and runs in another users name
+$username = 'Fin1'
+$password = 'Pswdpswd123;'
 
+$securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+$credential = New-Object System.Management.Automation.PSCredential $username, $securePassword
+
+$testFilename="testChown.test"
+$currentPath=(Get-Location).Path.ToString()
+$createFileScriptPath = $currentPath + "\createFile.ps1"
+$args= $createFileScriptPath + " " + $chaosasPath + " " + $testFilename"
+Start-Process powershell.exe -Credential $credential -ArgumentList ("-file $args")
+
+takeown /f $chaosasPath + $testFilename
+
+# Task#8
+auditpol /set /category:"Privilege Use" /success:enable /failure:enable
