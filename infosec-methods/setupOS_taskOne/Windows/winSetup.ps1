@@ -77,15 +77,15 @@ function rwxACL {
     return $rule
 }
 
-function noneACL {
+function denyAccessACL {
     param([string]$user)
     
     $rule = New-Object FileSystemAccessRule(
             $user,
-            0,
+            [FileSystemRights]::FullControl,
             ([InheritanceFlags]::ContainerInherit + [InheritanceFlags]::ObjectInherit),
             [PropagationFlags]::None,
-            [AccessControlType]::Allow)
+            [AccessControlType]::Deny)
     return $rule
 }
 
@@ -204,7 +204,7 @@ New-Item -Path $admin1Path -ItemType "Directory"
 
 $aclObject = defaultACL -Path $admin1Path
 
-$accountingEntry = noneACL -user $accountingGroup
+$accountingEntry = denyAccessACL -user $accountingGroup
 $admin1Entry = rwxACL -user "Fin1"
 
 $aclObject.AddAccessRule($admin1Entry)
@@ -219,7 +219,7 @@ New-Item -Path $admin2Path -ItemType "Directory"
 
 $aclObject = defaultACL -Path $admin2Path
 
-$accountingEntry = noneACL -user $accountingGroup
+$accountingEntry = denyAccessACL -user $accountingGroup
 $admin2Entry = rwxACL -user "Fin2"
 
 $aclObject.AddAccessRule($admin2Entry)
