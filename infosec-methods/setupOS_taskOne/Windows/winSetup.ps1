@@ -357,7 +357,7 @@ $credential = New-Object System.Management.Automation.PSCredential $username, $s
 $testFilename="testChown.test"
 $currentPath=(Get-Location).Path.ToString()
 $createFileScriptPath = $currentPath + "\createFile.ps1"
-$args= $createFileScriptPath + " " + $chaosasPath + " " + $testFilename"
+$args= $createFileScriptPath + " " + $chaosasPath + " " + $testFilename
 Start-Process powershell.exe -Credential $credential -ArgumentList ("-file $args")
 
 takeown /f $chaosasPath + $testFilename
