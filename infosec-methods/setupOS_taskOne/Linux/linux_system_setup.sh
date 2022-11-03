@@ -13,6 +13,7 @@ userdel Fin2
 userdel Man1
 userdel Man2
 userdel Supreme
+userdel AccountantNo1
 
 groupdel sysadmin
 groupdel director
@@ -20,6 +21,7 @@ groupdel administration
 groupdel manager
 groupdel peasant
 groupdel employee
+groupdel accounting
 
 rm -rf /bendrove
 
@@ -27,8 +29,9 @@ rm -rf /bendrove
 groupadd sysadmin
 groupadd director
 groupadd administration
-groupadd manager        
+groupadd manager
 groupadd employee
+groupadd accounting
 
 # Create users and remove passwords for them
 useradd -d /bendrove -g sysadmin God
@@ -51,6 +54,9 @@ passwd -d Man2
 
 useradd -d /bendrove -g employee Supreme
 passwd -d Supreme
+
+useradd -d /bendrove -g accounting AccountantNo1
+passwd -d AccountantNo1
 
 # Kuriam direktorijas
 mkdir -p /bendrove
@@ -80,6 +86,10 @@ mkdir -p /bendrove/administracija/fin2
 setfacl -m u::rwx,default:user::rwx /bendrove/administracija/fin2
 chown Fin2:administration /bendrove/administracija/fin2
 
+# Buhalterijos kampelis
+mkdir -p /bendrove/administracija/buhalterija
+setfacl -m u::rwx,g:accounting:r-x,default:user::rwx,default:g:accounting:r-x /bendrove/administracija/buhalterija
+chown root:administration /bendrove/administracija/buhalterija
 
 
 # Vadybininku kampelis
@@ -137,3 +147,11 @@ su - $ownerName -c "touch $filename"
 homedir=$( getent passwd "$ownerName" | cut -d: -f6 )
 chown $newOwner "$homedir$filename"
 
+# Tasks 5,8?
+sudo cp /etc/audit/audit.rules /etc/audit/audit.rules-backup
+sudo cp audit.rules.upgrade /etc/audit/audit.rules
+
+# sudo incidents are logged in /var/log/auth.log
+
+
+# Tasks 5,7,8 might be missing so consult recording and check whether they might be already done.
