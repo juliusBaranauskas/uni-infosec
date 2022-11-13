@@ -60,7 +60,7 @@ passwd -d AccountantNo1
 
 # Kuriam direktorijas
 mkdir -p /bendrove
-setfacl -m user::---,group::---,other:---,group:employee:r-x,default:user::rwx,default:g::r-x /bendrove
+setfacl -m user::---,group::---,other:---,group:employee:r-x,g:accounting:r-x,default:user::rwx,default:g::r-x /bendrove
 
 setfacl -m group:director:rwx,group:sysadmin:rwx,default:group:sysadmin:rwx,default:group:director:rwx /bendrove
 
