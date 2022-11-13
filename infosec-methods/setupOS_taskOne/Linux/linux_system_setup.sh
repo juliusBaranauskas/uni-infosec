@@ -19,7 +19,6 @@ groupdel sysadmin
 groupdel director
 groupdel administration
 groupdel manager
-groupdel peasant
 groupdel employee
 groupdel accounting
 
