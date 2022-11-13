@@ -147,11 +147,9 @@ su - $ownerName -c "touch $filename"
 homedir=$( getent passwd "$ownerName" | cut -d: -f6 )
 chown $newOwner "$homedir$filename"
 
-# Tasks 5,8?
+# Tasks 5,8
 sudo cp /etc/audit/audit.rules /etc/audit/audit.rules-backup
 sudo mkdir -p /etc/audit/audit.rules && cp audit.rules.upgrade /etc/audit/audit.rules
 
 # sudo incidents are logged in /var/log/auth.log
 
-
-# Tasks 5,7,8 might be missing so consult recording and check whether they might be already done.
