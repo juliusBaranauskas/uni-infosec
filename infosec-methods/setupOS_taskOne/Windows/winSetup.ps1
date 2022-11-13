@@ -366,8 +366,7 @@ $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential $username, $securePassword
 
 $testFilename="testChown.test"
-$currentPath=(Get-Location).Path.ToString()
-$createFileScriptPath = $currentPath + "\createFile.ps1"
+$createFileScriptPath = $PSScriptRoot+ "\createFile.ps1"
 $args= $createFileScriptPath + " " + $chaosasPath + " " + $testFilename
 Start-Process powershell.exe -Credential $credential -ArgumentList ("-file $args") -Wait
 
