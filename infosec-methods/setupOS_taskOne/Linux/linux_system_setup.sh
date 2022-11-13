@@ -149,7 +149,7 @@ chown $newOwner "$homedir$filename"
 
 # Tasks 5,8
 sudo cp /etc/audit/audit.rules /etc/audit/audit.rules-backup
-sudo mkdir -p /etc/audit/audit.rules && cp audit.rules.upgrade /etc/audit/audit.rules
+sudo mkdir -p /etc/audit && cp audit.rules.upgrade /etc/audit/audit.rules
 
 # sudo incidents are logged in /var/log/auth.log
 
